@@ -1,0 +1,2 @@
+Builds a small C++ program that uses Ceres.
+Uses emscripten to target js.
