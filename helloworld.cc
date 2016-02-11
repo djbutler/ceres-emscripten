@@ -32,13 +32,43 @@
 //
 // Minimize 0.5 (10 - x)^2 using jacobian matrix computed using
 // automatic differentiation.
+#include <stdio.h>
+#include <sstream>
+
 #include "ceres/ceres.h"
 #include "glog/logging.h"
+#include "emscripten/emscripten.h"
+/*
 using ceres::AutoDiffCostFunction;
 using ceres::CostFunction;
 using ceres::Problem;
 using ceres::Solver;
 using ceres::Solve;
+using ceres::IterationCallback;
+using ceres::IterationSummary;
+*/
+using namespace ceres;
+using namespace std;
+
+class RenderingCallback : public IterationCallback {
+ public:
+  explicit RenderingCallback(double* x)
+      : x_(x) {}
+
+  ~RenderingCallback() {}
+
+  CallbackReturnType operator()(const IterationSummary& summary) {
+    ostringstream strs;
+    strs << "Module.print('x = " << *x_ << "')";
+    emscripten_run_script(strs.str().c_str());
+    cout << "Iteration " << summary.iteration << endl;
+    return SOLVER_CONTINUE;
+  }
+
+ private:
+  const double* x_;
+};
+
 // A templated cost functor that implements the residual r = 10 -
 // x. The method operator() is templated so that we can then use an
 // automatic differentiation wrapper around it to generate its
@@ -66,6 +96,9 @@ int main(int argc, char** argv) {
   Solver::Options options;
   options.minimizer_progress_to_stdout = true;
   options.minimizer_type = ceres::LINE_SEARCH;
+  RenderingCallback render_callback(&x);
+  options.callbacks.push_back(&render_callback);
+  options.update_state_every_iteration = true;
   Solver::Summary summary;
   Solve(options, &problem, &summary);
   std::cout << summary.BriefReport() << "\n";
