@@ -12,17 +12,24 @@
     <body>
         <div id="container"></div>
         <script src="js/sketch.js"></script>
+        <script src="helloworld.js"></script>
         <script>
 
             var circle = {x: -100, y: -100};
             var radius = 30;
             var thickness = 10;
+            var solver;
 
             Sketch.create({
                 container: document.getElementById( 'container' ),
+                setup: function() {
+                    solver = new Module.AvoiderSolver;
+                },
                 touchmove: function() {
-                    circle.x = this.touches[0].x;
-                    circle.y = this.touches[0].y;
+                    solver.goal_pose = [this.touches[0].x, this.touches[0].y];
+                    solver.stepSolve(10);
+                    circle.x = solver.current_pose[0];
+                    circle.y = solver.current_pose[1];
                 },
                 draw: function() {
                     this.beginPath();
