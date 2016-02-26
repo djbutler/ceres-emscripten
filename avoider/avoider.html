@@ -16,6 +16,7 @@
         <script>
 
             var circle = {x: -100, y: -100};
+            var cursor = {x: -100, y: -100};
             var radius = 30;
             var thickness = 10;
             var solver;
@@ -26,8 +27,12 @@
                     solver = new Module.AvoiderSolver;
                 },
                 touchmove: function() {
-                    solver.goal_pose = [this.touches[0].x, this.touches[0].y];
-                    solver.stepSolve(10);
+                    cursor.x = this.touches[0].x;
+                    cursor.y = this.touches[0].y;
+                    solver.goal_pose = [cursor.x, cursor.y];
+                },
+                update: function() {
+                    solver.timeSolve(0.1);
                     circle.x = solver.current_pose[0];
                     circle.y = solver.current_pose[1];
                 },
@@ -38,7 +43,7 @@
                     this.strokeStyle = '#333333';
                     this.lineCap = 'round';
                     this.moveTo(circle.x, circle.y);
-                    this.lineTo(this.touches[0].x, this.touches[0].y);
+                    this.lineTo(cursor.x, cursor.y);
                     this.stroke();
                     // draw annulus that avoids the cursor
                     this.beginPath();
