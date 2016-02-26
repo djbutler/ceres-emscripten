@@ -32,10 +32,19 @@
                     circle.y = solver.current_pose[1];
                 },
                 draw: function() {
+                    // draw line from cursor to annulus
+                    this.beginPath();
+                    this.lineWidth = 2*thickness;
+                    this.strokeStyle = '#333333';
+                    this.lineCap = 'round';
+                    this.moveTo(circle.x, circle.y);
+                    this.lineTo(this.touches[0].x, this.touches[0].y);
+                    this.stroke();
+                    // draw annulus that avoids the cursor
                     this.beginPath();
                     this.arc( circle.x, circle.y, radius + thickness, 0, TWO_PI );
                     this.lineWidth = thickness;
-                    this.globalAlpha = 0.2;
+                    this.globalAlpha = 0.5;
                     this.strokeStyle = '#CCCCCC';
                     this.stroke();
                 }
