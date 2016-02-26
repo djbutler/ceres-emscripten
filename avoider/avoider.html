@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+    <head>
+        <title>sketch.js &raquo; Basic Example</title>
+        <link rel="stylesheet" href="css/example.css">
+        <style type="text/css">
+            html, body {
+                background: #F51E50;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script src="js/sketch.js"></script>
+        <script>
+
+            var circle = {x: -100, y: -100};
+            var radius = 30;
+            var thickness = 10;
+
+            Sketch.create({
+                container: document.getElementById( 'container' ),
+                touchmove: function() {
+                    circle.x = this.touches[0].x;
+                    circle.y = this.touches[0].y;
+                },
+                draw: function() {
+                    this.beginPath();
+                    this.arc( circle.x, circle.y, radius + thickness, 0, TWO_PI );
+                    this.lineWidth = thickness;
+                    this.globalAlpha = 0.2;
+                    this.strokeStyle = '#CCCCCC';
+                    this.stroke();
+                }
+            })
+
+        </script>
+    </body>
+</html>
